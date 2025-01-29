@@ -6,9 +6,14 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+import { errorMiddleware } from "./middlewares/error.js";
 import authRoute from "./routes/authRoute.js";
 
-app.use("/api/v1", authRoute);
+app.use("/api/auth", authRoute);
+
+
+
+app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, async () => {
