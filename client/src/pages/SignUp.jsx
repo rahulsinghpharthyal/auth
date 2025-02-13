@@ -1,34 +1,39 @@
 import React, { useState, useTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSignUpMutation } from "../app/api/apiSlice";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const navigate = useNavigate();
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  console.log("this is form data", formData);
+
+  const [signUp, { isLoading, isError }] = useSignUpMutation();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     startTransition(async () => {
       try {
-        const data = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-        const res = await data.json();
-        console.log(res)
-        if (res.success === false) return setError(true);
-        navigate('/sign-in');
-        setError(false);
+        const res = await signUp(formData).unwrap();
+        // console.log("this is res", res);
+        // const data = await fetch("/api/auth/signup", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify(formData),
+        // });
+        // const res = await data.json();
+        // console.log(res)
+        // if (res.success === false) return setError(true);
+        // navigate('/sign-in');
+        // setError(false);
       } catch (error) {
-        setError(true);
+        // console.log("tis is error", error);
+        setError(error?.data?.message);
       }
     });
   };
@@ -63,7 +68,7 @@ const SignUp = () => {
           type="submit"
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          {isPending ? "Please wait" : "Sign Up"}
+          {isPending || isLoading ? "Please wait" : "Sign Up"}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
@@ -72,9 +77,11 @@ const SignUp = () => {
           <span className="text-blue-500">Sign In</span>
         </Link>
       </div>
-      <div>
-        <p className="text-red-700 mt-5">{error && "Something went wrong"}</p>
-      </div>
+      {error && (
+        <div>
+          <p className="text-red-700 mt-5">{error}</p>
+        </div>
+      )}
     </div>
   );
 };
