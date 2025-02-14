@@ -1,23 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const api = createApi({
+const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000" }),
-  endpoints: (builder) => ({
-    signUp: builder.mutation({
-      query: (formData) => ({
-      url: "/api/auth/signup",
-      method: 'POST',
-      body: formData})
-    }),
-    signIn: builder.mutation({
-      query: (formData) => ({
-      url: "/api/auth/signin",
-      method: 'POST',
-      credentials: 'include',
-      body: formData,
-    })
-    }),
-  }),
+  endpoints: () => ({}), // Initial empty endpoints
 });
 
-export const { useSignUpMutation, useSignInMutation } = api;
+export default apiSlice;

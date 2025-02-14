@@ -1,17 +1,20 @@
 import React, { useState, useTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSignInMutation } from "../app/api/apiSlice";
+import { useSignInMutation } from "../features/auth/authApiSlice";
+import { useDispatch } from "react-redux";
+import { login } from "../features/auth/authSlice";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const [signIn, { isLoading, isError }] = useSignInMutation();
+  const [signIn, { isLoading }] = useSignInMutation();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,7 +25,7 @@ const SignIn = () => {
     startTransition(async () => {
       try {
         const res = await signIn(formData).unwrap();
-        console.log("this is res", res);
+        dispatch(login(res?.Data));
         navigate("/");
         // const data = await fetch("/api/auth/signin", {
         //   method: "POST",
@@ -38,7 +41,7 @@ const SignIn = () => {
         // navigate("/");
       } catch (error) {
         console.log("this is error", error);
-        setError(error?.data?.message || "An error occurred");
+        setError(error?.data?.message || "Something went wrong");
       }
     });
   };

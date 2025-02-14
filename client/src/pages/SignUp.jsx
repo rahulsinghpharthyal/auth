@@ -1,6 +1,6 @@
 import React, { useState, useTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSignUpMutation } from "../app/api/apiSlice";
+import { useSignUpMutation } from "../features/auth/authApiSlice";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
