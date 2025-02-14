@@ -15,9 +15,14 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.username || !formData.email || !formData.password) {
+      setError("All fields are required");
+      return;
+    }
     startTransition(async () => {
       try {
         const res = await signUp(formData).unwrap();
+        navigate('/sign-in');
         // console.log("this is res", res);
         // const data = await fetch("/api/auth/signup", {
         //   method: "POST",
@@ -33,10 +38,16 @@ const SignUp = () => {
         // setError(false);
       } catch (error) {
         // console.log("tis is error", error);
-        setError(error?.data?.message);
+          setError(error?.data?.message || 'An error occurred');
       }
     });
   };
+
+  if(error) {
+    setTimeout(()=>{
+      setError('')
+    }, 5000)
+  }
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -64,7 +75,7 @@ const SignUp = () => {
           onChange={handleOnChange}
         />
         <button
-          disabled={isPending}
+          disabled={isPending || isLoading}
           type="submit"
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >

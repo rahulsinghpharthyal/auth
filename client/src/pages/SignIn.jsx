@@ -1,5 +1,6 @@
 import React, { useState, useTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSignInMutation } from "../app/api/apiSlice";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
@@ -10,27 +11,43 @@ const SignIn = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const [signIn, { isLoading, isError }] = useSignInMutation();
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!(formData.email && formData.password)) {
+      setError("All fields are required");
+      return;
+    }
     startTransition(async () => {
       try {
-        const data = await fetch("/api/auth/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-        const res = await data.json();
-        console.log("this is error", error);
-        console.log(res);
-        if (res.success === false) return setError(true);
+        const res = await signIn(formData).unwrap();
+        console.log("this is res", res);
         navigate("/");
+        // const data = await fetch("/api/auth/signin", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify(formData),
+        // });
+        // const res = await data.json();
+        // console.log("this is error", error);
+        // console.log(res);
+        // if (res.success === false) return setError(true);
+        // navigate("/");
       } catch (error) {
-        setError(true);
+        console.log("this is error", error);
+        setError(error?.data?.message || "An error occurred");
       }
     });
   };
+
+  if (error) {
+    setTimeout(() => {
+      setError("");
+    }, 5000);
+  }
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -51,11 +68,11 @@ const SignIn = () => {
           onChange={handleOnChange}
         />
         <button
-          disabled={isPending}
+          disabled={isPending || isLoading}
           type="submit"
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          {isPending ? "Please wait" : "Sign In"}
+          {isPending || isLoading ? "Please wait" : "Sign In"}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
@@ -64,9 +81,11 @@ const SignIn = () => {
           <span className="text-blue-500">Sign Up</span>
         </Link>
       </div>
-      <div>
-        <p className="text-red-700 mt-5">{error && "Something went wrong"}</p>
-      </div>
+      {error && (
+        <div>
+          <p className="text-red-700 mt-5">{error}</p>
+        </div>
+      )}
     </div>
   );
 };

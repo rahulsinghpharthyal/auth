@@ -9,7 +9,15 @@ export const api = createApi({
       method: 'POST',
       body: formData})
     }),
+    signIn: builder.mutation({
+      query: (formData) => ({
+      url: "/api/auth/signin",
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    })
+    }),
   }),
 });
 
-export const { useSignUpMutation } = api;
+export const { useSignUpMutation, useSignInMutation } = api;
