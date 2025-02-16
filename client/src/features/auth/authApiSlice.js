@@ -13,11 +13,17 @@ export const api = apiSlice.injectEndpoints({
       query: (formData) => ({
         url: "/api/auth/signin",
         method: "POST",
-        credentials: "include",
         body: formData,
+      }),
+    }),
+    oAuth: builder.mutation({
+      query: (data) => ({
+        url: "/api/auth/google",
+        method: "POST",
+        body: data,
       }),
     }),
   }),
 });
 
-export const { useSignUpMutation, useSignInMutation } = api;
+export const { useSignUpMutation, useSignInMutation, useOAuthMutation} = api;

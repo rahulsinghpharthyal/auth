@@ -2,11 +2,13 @@
 import {Router} from "express";
 
 // Controllers:-
-import { signIn, signUp } from "../controllers/authController.js";
+import { googleAuth, logOut, signIn, signUp } from "../controllers/authController.js";
 
 const router = Router();
 
 router.post('/signup', signUp);
 router.post('/signin', signIn);
+router.post('/google', googleAuth);
+router.post('/logout', logOut);
 
 export default router;

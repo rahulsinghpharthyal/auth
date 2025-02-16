@@ -4,6 +4,9 @@ import { useSignInMutation } from "../features/auth/authApiSlice";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../features/auth/authSlice";
 
+//Components:-
+import OAuth from "../components/OAuth";
+
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
@@ -79,6 +82,7 @@ const SignIn = () => {
         >
           {isPending || isLoading ? "Please wait" : "Sign In"}
         </button>
+        <OAuth setError={setError}/>
       </form>
       <div className="flex gap-2 mt-5">
         <p>Don't have an account? </p>

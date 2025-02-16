@@ -2,6 +2,9 @@ import React, { useState, useTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignUpMutation } from "../features/auth/authApiSlice";
 
+// Components:-
+import OAuth from "../components/OAuth";
+
 const SignUp = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState("");
@@ -81,6 +84,7 @@ const SignUp = () => {
         >
           {isPending || isLoading ? "Please wait" : "Sign Up"}
         </button>
+        <OAuth/>
       </form>
       <div className="flex gap-2 mt-5">
         <p>Have an account? </p>
