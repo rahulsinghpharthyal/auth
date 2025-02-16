@@ -9,6 +9,8 @@ import store from "./app/store.js";
 // import { api } from "./app/api/apiSlice.js";
 
 
+// if we use redux-persist to persist the data this is genrally use the local-storage;
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>

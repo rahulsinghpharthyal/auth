@@ -2,12 +2,13 @@ import React, { useState, useTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignInMutation } from "../features/auth/authApiSlice";
 import { useDispatch } from "react-redux";
-import { login } from "../features/auth/authSlice";
+import { setCredentials } from "../features/auth/authSlice";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [isPending, startTransition] = useTransition();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleOnChange = (e) => {
@@ -25,7 +26,8 @@ const SignIn = () => {
     startTransition(async () => {
       try {
         const res = await signIn(formData).unwrap();
-        dispatch(login(res?.Data));
+        console.log("tis is res", res);
+        dispatch(setCredentials(res?.Data));
         navigate("/");
         // const data = await fetch("/api/auth/signin", {
         //   method: "POST",

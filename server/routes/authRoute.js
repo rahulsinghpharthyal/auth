@@ -1,4 +1,7 @@
+// Packeages:-
 import {Router} from "express";
+
+// Controllers:-
 import { signIn, signUp } from "../controllers/authController.js";
 
 const router = Router();

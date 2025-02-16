@@ -1,8 +1,13 @@
+// middlewares:-
 import { catchAsyncError } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/error.js";
-import User from "../models/user.js";
+
+// packages:-
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
+// models:-
+import User from "../models/user.js";
 
 export const signUp = catchAsyncError(async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -24,12 +29,26 @@ export const signIn = catchAsyncError(async (req, res, next) => {
   const vaildEmail = await User.findOne({ email });
   if (!vaildEmail) return next(new ErrorHandler("Email not register", 400));
   const validPassword = await bcrypt.compare(password, vaildEmail.password);
-  if (!validPassword) return next(new ErrorHandler("Incorrect Password", 400));
+  if (!validPassword) return next(new ErrorHandler("Incorrect Password", 400));44
+
+  //this is payload for token creation:-
   const payload = { id: vaildEmail._id };
-  const token = jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: "1hr" });
-  const { password: userPassword, ...user } = vaildEmail._doc;
+
+  // Access and refresh token:-
+  const accessToken = jwt.sign(payload, process.env.ACCESS_JWT_TOKEN, { expiresIn: "1hr" });
+  const refreshToken = jwt.sign(payload, process.env.Refresh_JWT_TOKEN, {expiresIn: "4hr"});
+
+  const updatedUser = await User.findOneAndUpdate(
+    {_id: vaildEmail._id},
+    {refreshToken: refreshToken},
+    {new: true, runValidators: true}
+  );
+
+  const { password: userPassword, refreshToken: userRefreshToken, ...user } = updatedUser._doc;
+
+
   return res
-    .cookie("Token", token, {
+    .cookie("Token", refreshToken, {
       httpOnly: false, // Set to false for testing purposes
       secure: false, // Ensure this is false for local development without HTTPS
       // sameSite: 'None', // Set SameSite to None for cross-origin requests during development
@@ -38,5 +57,5 @@ export const signIn = catchAsyncError(async (req, res, next) => {
       expires: new Date(Date.now() + 3600000),
     })
     .status(200)
-    .json({ Data: { ...user }, message: "Logged In Successfully" });
+    .json({ Data: { ...user, accessToken }, message: "Logged In Successfully" });
 });
