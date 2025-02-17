@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { selectCurrentUser } from "../features/auth/authSlice";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+  const  user  = useSelector(selectCurrentUser);
+  console.log(user);
   return (
     <div className="bg-slate-200">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -15,9 +19,18 @@ const Header = () => {
           <Link to="/about">
             <li>About</li>
           </Link>
+          {
+            user ? (
+              <Link to='/profile' title="profile">
+              <img src={user.profileImg} alt="Profile Image" width={30} height={30} className="rounded-full"/>
+              </Link>
+            ) : (
+
           <Link to="/sign-in">
             <li>Sign In</li>
           </Link>
+            )
+          }
         </ul>
       </div>
     </div>

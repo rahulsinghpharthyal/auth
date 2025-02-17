@@ -39,6 +39,7 @@ export const signIn = catchAsyncError(async (req, res, next) => {
 export const googleAuth = catchAsyncError(async (req, res, next) => {
   const { username, email, profileImg } = req.body;
   const existingUser = await User.findOne({ email: email });
+  console.log(existingUser)
   if (existingUser) {
     generateTokensAndResponse(existingUser, res);
   } else {
@@ -52,6 +53,7 @@ export const googleAuth = catchAsyncError(async (req, res, next) => {
       profileImg: profileImg,
     });
     await newUser.save();
+    console.log('thiis is newUser', newUser)
     generateTokensAndResponse(newUser, res);
   }
 });
