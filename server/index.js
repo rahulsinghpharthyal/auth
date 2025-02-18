@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 
 app.use(cors({
-  origin: ['http://localhost:5173'], // Replace with your Vite app's URL
+  origin: ['http://localhost:5173', 'https://api.cloudinary.com'], // Replace with your Vite app's URL
   methods: ['GET','POST','PUT','DELETE'],
   credentials: true,
 }));
@@ -26,12 +26,14 @@ app.use(cors({
 // Routes:-
 
 import authRoute from "./routes/authRoute.js";
+import userRoute from "./routes/userRoute.js";
 import authenticateRoute from "./routes/authenticateRoute.js";
 import getRefreshTokenRoute from "./routes/refreshTokenRoute.js";
 
 app.use("/api/auth", authenticateRoute);
 app.use("/api/auth", getRefreshTokenRoute)
 app.use("/api/auth", authRoute);
+app.use("/api/auth", userRoute);
 
 
 

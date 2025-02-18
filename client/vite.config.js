@@ -10,6 +10,13 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5000',
         secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+
+      },
+      '/cloudinary': {
+        target: 'https://api.cloudinary.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cloudinary/, ''),
       }
     }
   }

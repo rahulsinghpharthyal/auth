@@ -3,6 +3,7 @@ import { selectCurrentUser } from "../features/auth/authSlice";
 import { useEffect, useRef, useState } from "react";
 import { cloudinaryConfig } from "../config/cloudinary";
 import axios from "axios";
+import { useUploadToCloudinaryMutation } from "../features/user/userApiSlice";
 
 const Profile = () => {
   console.log(cloudinaryConfig);
@@ -15,26 +16,24 @@ const Profile = () => {
   console.log("this is image", image);
   const user = useSelector(selectCurrentUser);
 
+  const [uploadToCloudinary, {isLoading}] = useUploadToCloudinaryMutation();
   // uplaod to cloudinary:-
   const handleUploadImageToCloudinary = async (image) => {
     try {
       if (!image) {
         return;
       }
-      const formData = new FormData();
-      formData.append("file", image);
-      formData.append("upload_preset", cloudinaryConfig.upload_preset);
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloud_name}/image/upload`,
-        formData
-      );
-      setFormData({...formData, profileImg: response?.data?.secure_url})
-      setImageUrl(response?.data?.secure_url);
+      const imageData = new FormData();
+      imageData.append("file", image);
+      imageData.append("upload_preset", cloudinaryConfig.upload_preset);
+      const response = await uploadToCloudinary(imageData).unwrap();
       console.log("this is response", response);
+      setFormData({...formData, profileImg: response?.secure_url})
+      setImageUrl(response?.secure_url);
       setMessage("Image Uploaded Successfully!");
     } catch (error) {
       console.log('this is error', error)
-      setMessage(error?.response?.data?.error?.message || 'Error uploading image')
+      setMessage(error?.data?.error?.message || 'Error uploading image')
     }
   };
 
@@ -62,7 +61,7 @@ const Profile = () => {
           onChange={(e) => setImage(e.target.files[0])}
         />
         <img
-          src={imageUrl ? imageUrl : user.profileImg}
+          src={formData.profileImg || user.profileImg}
           alt="Profile Picture"
           className="h-24 w-24 self-center cursor-pointer
         rounded-full object-cover mt-2"

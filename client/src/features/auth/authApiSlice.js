@@ -1,6 +1,6 @@
 import apiSlice from "../../app/api/apiSlice";
 
-export const api = apiSlice.injectEndpoints({
+export const authSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     signUp: builder.mutation({
       query: (formData) => ({
@@ -26,4 +26,4 @@ export const api = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useSignUpMutation, useSignInMutation, useOAuthMutation} = api;
+export const { useSignUpMutation, useSignInMutation, useOAuthMutation} = authSlice;
