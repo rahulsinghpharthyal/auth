@@ -16,7 +16,7 @@ export const isAuthenticated = catchAsyncError(async(req, res, next) => {
         process.env.ACCESS_JWT_TOKEN,
         (err, decoded) => {
             if(err) return next(new ErrorHandler('Forbidden', 403)) // Invalid Token
-            req.user = {userId: decoded.id};
+            req.user = {...req.user, userId: decoded.id};
             next();
         }
     )

@@ -13,8 +13,8 @@ import MainLayout from "./pages/MainLayout";
 import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
-  useAuthenticateQuery();
-
+ const a = useAuthenticateQuery();
+  console.log(a)
   return (
     <Router>
       <Routes>

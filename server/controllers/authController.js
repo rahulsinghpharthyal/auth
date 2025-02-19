@@ -37,7 +37,7 @@ export const signIn = catchAsyncError(async (req, res, next) => {
 });
 
 export const googleAuth = catchAsyncError(async (req, res, next) => {
-  const { username, email, profileImg } = req.body;
+  const { name, email, picture } = req.user.userData;
   const existingUser = await User.findOne({ email: email });
   console.log(existingUser)
   if (existingUser) {
@@ -47,10 +47,10 @@ export const googleAuth = catchAsyncError(async (req, res, next) => {
     const generatedPassword = Math.random().toString(36).slice(-8);
     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
     const newUser = new User({
-      username: username,
+      username: name,
       email: email,
       password: hashedPassword,
-      profileImg: profileImg,
+      profileImg: picture,
     });
     await newUser.save();
     console.log('thiis is newUser', newUser)

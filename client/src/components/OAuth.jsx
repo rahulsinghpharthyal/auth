@@ -17,12 +17,9 @@ const OAuth = ({setError}) => {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
-      console.log("this ", result);
-      const data = {
-        username: result.user.displayName,
-        email: result.user.email,
-        profileImg: result.user.photoURL,
-      };
+      console.log("this ", result.user.accessToken);
+      console.log("this ", await result.user.getIdToken());
+      const data = {idToken: result.user.accessToken};
       const res = await oAuth(data).unwrap();
         console.log("this is res", res);
         dispatch(setCredentials(res?.Data));

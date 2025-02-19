@@ -6,10 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server/index.js",
-    "start": "node server/index.js",
-    "client": "cd client && yarn start",
-    "client:build": "cd client && yarn build",
-    "build": "yarn client:build"
+    "start": "node server/index.js"
   },
   "packageManager": "yarn@4.4.1",
   "dependencies": {
@@ -18,6 +15,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "firebase-admin": "^13.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "nodemon": "^3.1.9"
