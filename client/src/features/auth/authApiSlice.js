@@ -23,7 +23,13 @@ export const authSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    signOut: builder.mutation({
+      query: () => ({
+        url: "/api/auth/signout",
+        method: "POST",
+      })
+    })
   }),
 });
 
-export const { useSignUpMutation, useSignInMutation, useOAuthMutation} = authSlice;
+export const { useSignUpMutation, useSignInMutation, useOAuthMutation, useSignOutMutation} = authSlice;

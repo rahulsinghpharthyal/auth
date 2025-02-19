@@ -9,6 +9,6 @@ const router = Router();
 router.post('/signup', signUp);
 router.post('/signin', signIn);
 router.post('/google', googleAuth);
-router.post('/logout', logOut);
+router.post('/signout', logOut);
 
 export default router;

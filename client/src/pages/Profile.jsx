@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentUser, setCredentials } from "../features/auth/authSlice";
+import { logOut, selectCurrentUser, setCredentials } from "../features/auth/authSlice";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { cloudinaryConfig } from "../config/cloudinary";
 import { useDeleteUserMutation, useUpdateUserMutation } from "../features/user/userApiSlice";
 import { useUploadToCloudinaryMutation } from "../features/user/uploadImageApiSlice";
 import { useNavigate } from "react-router-dom";
+import { useSignOutMutation } from "../features/auth/authApiSlice";
 
 const Profile = () => {
   console.log(cloudinaryConfig);
@@ -24,6 +25,7 @@ const Profile = () => {
     useUpdateUserMutation();
 
   const [deleteUser, {isLoading: deleteUserLoading}] = useDeleteUserMutation();
+  const [signOutUser, {isLoading: signOutUserLoading}] = useSignOutMutation();
   // uplaod to cloudinary:-
   const handleUploadImageToCloudinary = async (image) => {
     try {
@@ -74,9 +76,19 @@ const Profile = () => {
       console.log('this is respose', response)
       navigate('/sign-in');
     }catch(error){
-      console.log('this is errore', error)
+      setMessage(error?.data?.error?.message || 'Something went wrong')
     }
   };
+
+  const handleSignOut = async () => {
+    try{
+      const response = await signOutUser().unwrap();
+      console.log(response);
+      dispatch(logOut());
+    }catch(error){
+      console.log('this is logoht eror', error);
+    }
+  }
 
 
   useEffect(() => {
@@ -139,7 +151,7 @@ const Profile = () => {
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={()=>handleDeleteAccount(user._id)} className="text-red-700 cursor-pointer">Delete Account</span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span onClick={()=>handleSignOut()} className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
     </div>
   );
