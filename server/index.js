@@ -4,12 +4,19 @@ import dotenv from "dotenv";
 dotenv.config();
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import path from 'path';
 
 // Database Connection:-
 import dbConnection from "./database/dbConnection.js";
 
+const __dirname = path.resolve();
 const app = express();
 
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/client/dist', 'index.html'));
+});
 // Middleware:-
 import { errorMiddleware } from "./middlewares/error.js";
 app.use(express.json());

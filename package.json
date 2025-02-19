@@ -6,7 +6,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server/index.js",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "client": "cd client && yarn start",
+    "client:build": "cd client && yarn build",
+    "build": "yarn client:build"
   },
   "packageManager": "yarn@4.4.1",
   "dependencies": {
