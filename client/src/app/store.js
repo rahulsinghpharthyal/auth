@@ -3,16 +3,16 @@ import { configureStore } from "@reduxjs/toolkit";
 // apiSlice:-
 import apiSlice from "./api/apiSlice";
 import authReducer from '../features/auth/authSlice';
-import userApiSlice from "../features/user/userApiSlice";
+import uploadImageApiSlice from "../features/user/uploadImageApiSlice";
 
 
 const store = configureStore({
     reducer: {
         auth: authReducer,
         [apiSlice.reducerPath]: apiSlice.reducer,
-        [userApiSlice.reducerPath]: userApiSlice.reducer,
+        [uploadImageApiSlice.reducerPath]: uploadImageApiSlice.reducer,
     },
-    middleware: (getDefaultMiddleware)=>[...getDefaultMiddleware(), apiSlice.middleware, userApiSlice.middleware],
+    middleware: (getDefaultMiddleware)=>[...getDefaultMiddleware(), apiSlice.middleware, uploadImageApiSlice.middleware],
 })
 
 export default store;

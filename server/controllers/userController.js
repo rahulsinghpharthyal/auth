@@ -29,5 +29,5 @@ export const updateUser = catchAsyncError(async (req, res, next) => {
 
   const {password: pwd, refreshToken: rfr, ...rest} = updateUser._doc;
 
-  return res.status(200).json({data: rest, message: 'User updated Successfully'})
+  return res.status(200).json({Data: rest, message: 'Profile updated Successfully'})
 });

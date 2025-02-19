@@ -1,9 +1,9 @@
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../features/auth/authSlice";
-import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentUser, setCredentials } from "../features/auth/authSlice";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { cloudinaryConfig } from "../config/cloudinary";
-import axios from "axios";
-import { useUploadToCloudinaryMutation } from "../features/user/userApiSlice";
+import { useUpdateUserMutation } from "../features/user/userApiSlice";
+import { useUploadToCloudinaryMutation } from "../features/user/uploadImageApiSlice";
 
 const Profile = () => {
   console.log(cloudinaryConfig);
@@ -11,12 +11,16 @@ const Profile = () => {
   const [image, setImage] = useState();
   const [imageUrl, setImageUrl] = useState("");
   const [message, setMessage] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   const [formData, setFormData] = useState({});
   console.log("this is image", image);
   const user = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
 
-  const [uploadToCloudinary, {isLoading}] = useUploadToCloudinaryMutation();
+  const [uploadToCloudinary, { isLoading }] = useUploadToCloudinaryMutation();
+  const [updatedData, { isLoading: updateDataIsLoading, isError }] =
+    useUpdateUserMutation();
   // uplaod to cloudinary:-
   const handleUploadImageToCloudinary = async (image) => {
     try {
@@ -28,22 +32,38 @@ const Profile = () => {
       imageData.append("upload_preset", cloudinaryConfig.upload_preset);
       const response = await uploadToCloudinary(imageData).unwrap();
       console.log("this is response", response);
-      setFormData({...formData, profileImg: response?.secure_url})
+      setFormData({ ...formData, profileImg: response?.secure_url });
       setImageUrl(response?.secure_url);
       setMessage("Image Uploaded Successfully!");
     } catch (error) {
-      console.log('this is error', error)
-      setMessage(error?.data?.error?.message || 'Error uploading image')
+      console.log("this is error", error);
+      setMessage(error?.data?.error?.message || "Error uploading image");
     }
   };
 
-  console.log('this is fomrm Data', formData)
+  console.log("this is fomrm Data", formData);
 
   if (message) {
     setTimeout(() => {
       setMessage("");
     }, 6000);
   }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    startTransition(async () => {
+      try {
+        const res = await updatedData({ formData, id: user?._id }).unwrap();
+        console.log("tis is res", res);
+        dispatch(setCredentials(res?.Data));
+        setMessage(res?.message);
+      } catch (error) {
+        setMessage(error?.data?.error?.message || 'Something went wrong')
+        console.log("this is error", error);
+      }
+    });
+  };
+
   useEffect(() => {
     if (image) {
       handleUploadImageToCloudinary(image);
@@ -52,7 +72,7 @@ const Profile = () => {
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7"> Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           type="file"
           ref={fileRef}
@@ -73,7 +93,9 @@ const Profile = () => {
           type="text"
           id="username"
           placeholder="Username"
-          onChange={(e)=>setFormData({...formData, username: e.target.value})}
+          onChange={(e) =>
+            setFormData({ ...formData, username: e.target.value })
+          }
           className="bg-slate-100 rounded-tr-lg rounded-bl-lg p-2"
         />
         <input
@@ -81,17 +103,22 @@ const Profile = () => {
           type="email"
           id="email"
           placeholder="Email"
-          onChange={(e)=>setFormData({...formData, email: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className="bg-slate-100 rounded-tr-lg rounded-bl-lg p-2"
         />
         <input
           type="password"
           id="password"
           placeholder="Password"
-          onChange={(e)=>setFormData({...formData, password: e.target.value})}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
           className="bg-slate-100 rounded-tr-lg rounded-bl-lg p-2"
         />
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+        <button
+          type="submit"
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        >
           Update
         </button>
       </form>
