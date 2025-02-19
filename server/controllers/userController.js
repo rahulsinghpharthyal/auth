@@ -31,3 +31,22 @@ export const updateUser = catchAsyncError(async (req, res, next) => {
 
   return res.status(200).json({Data: rest, message: 'Profile updated Successfully'})
 });
+
+
+export const deleteUser = catchAsyncError(async(req, res, next)=>{
+  const {id} = req.params;
+  const {userId} = req.user;
+  if(id !== userId) return next(new ErrorHandler("Please delete your account", 401));
+
+  const user = await User.findOneAndDelete({_id: id});
+  if (!user) {
+    return next(new ErrorHandler("User not found or deletion failed", 404));
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "User account deleted successfully",
+  });
+
+
+})

@@ -2,8 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser, setCredentials } from "../features/auth/authSlice";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { cloudinaryConfig } from "../config/cloudinary";
-import { useUpdateUserMutation } from "../features/user/userApiSlice";
+import { useDeleteUserMutation, useUpdateUserMutation } from "../features/user/userApiSlice";
 import { useUploadToCloudinaryMutation } from "../features/user/uploadImageApiSlice";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   console.log(cloudinaryConfig);
@@ -17,10 +18,12 @@ const Profile = () => {
   console.log("this is image", image);
   const user = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const [uploadToCloudinary, { isLoading }] = useUploadToCloudinaryMutation();
   const [updatedData, { isLoading: updateDataIsLoading, isError }] =
     useUpdateUserMutation();
+
+  const [deleteUser, {isLoading: deleteUserLoading}] = useDeleteUserMutation();
   // uplaod to cloudinary:-
   const handleUploadImageToCloudinary = async (image) => {
     try {
@@ -63,6 +66,18 @@ const Profile = () => {
       }
     });
   };
+
+
+  const handleDeleteAccount = async (id) => {
+    try{
+      const response = await deleteUser(id).unwrap();
+      console.log('this is respose', response)
+      navigate('/sign-in');
+    }catch(error){
+      console.log('this is errore', error)
+    }
+  };
+
 
   useEffect(() => {
     if (image) {
@@ -123,7 +138,7 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span onClick={()=>handleDeleteAccount(user._id)} className="text-red-700 cursor-pointer">Delete Account</span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
     </div>
